@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block titulo %}Início - Controle de Gastos{% endblock %}
+
+{% block conteudo %}
+    <section class="cartoes-resumo">
+        <div class="cartao">
+            <span class="cartao-label">Total de gastos cadastrados</span>
+            <span class="cartao-valor">{{ total_gastos }}</span>
+        </div>
+        <div class="cartao cartao-destaque">
+            <span class="cartao-label">Soma de todos os gastos</span>
+            <span class="cartao-valor">R$ {{ "%.2f"|format(soma_total) }}</span>
+        </div>
+        {% if session.get('gastos_cadastrados_sessao') %}
+        <div class="cartao">
+            <span class="cartao-label">Cadastrados nesta sessão</span>
+            <span class="cartao-valor">{{ session.get('gastos_cadastrados_sessao') }}</span>
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="secao">
+        <div class="secao-titulo">
+            <h2>Últimos gastos</h2>
+            <a href="{{ url_for('listar_gastos') }}" class="link-ver-todos">Ver todos →</a>
+        </div>
+
+        {% if ultimos_gastos %}
+            <table class="tabela">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Data</th>
+                        <th>Valor</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for gasto in ultimos_gastos %}
+                    <tr>
+                        <td>{{ gasto.descricao }}</td>
+                        <td><span class="etiqueta">{{ gasto.categoria }}</span></td>
+                        <td>{{ gasto.data.strftime('%d/%m/%Y') }}</td>
+                        <td class="valor-negativo">R$ {{ "%.2f"|format(gasto.valor) }}</td>
+                        <td><a href="{{ url_for('detalhe_gasto', id=gasto.id) }}" class="botao botao-pequeno">Detalhes</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="mensagem-vazia">Nenhum gasto cadastrado ainda. <a href="{{ url_for('novo_gasto') }}">Cadastre o primeiro!</a></p>
+        {% endif %}
+    </section>
+{% endblock %}

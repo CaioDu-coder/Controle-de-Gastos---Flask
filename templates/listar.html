@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block titulo %}Meus Gastos - Controle de Gastos{% endblock %}
+
+{% block conteudo %}
+    <div class="secao-titulo">
+        <h2>Meus Gastos</h2>
+        <a href="{{ url_for('novo_gasto') }}" class="botao">+ Novo Gasto</a>
+    </div>
+
+    <form method="get" action="{{ url_for('listar_gastos') }}" class="formulario-filtro">
+        <label for="categoria">Filtrar por categoria:</label>
+        <select name="categoria" id="categoria" onchange="this.form.submit()">
+            <option value="Todas" {% if filtro_atual == "Todas" %}selected{% endif %}>Todas as categorias</option>
+            {% for cat in categorias %}
+                <option value="{{ cat }}" {% if filtro_atual == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <p class="resumo-filtro">
+        Mostrando <strong>{{ gastos|length }}</strong> gasto(s)
+        {% if filtro_atual != "Todas" %} na categoria <strong>{{ filtro_atual }}</strong>{% endif %}
+        — soma: <strong>R$ {{ "%.2f"|format(soma_filtrada) }}</strong>
+    </p>
+
+    {% if gastos %}
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Forma de pagamento</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for gasto in gastos %}
+                <tr>
+                    <td>{{ gasto.descricao }}</td>
+                    <td><span class="etiqueta">{{ gasto.categoria }}</span></td>
+                    <td>{{ gasto.forma_pagamento }}</td>
+                    <td>{{ gasto.data.strftime('%d/%m/%Y') }}</td>
+                    <td class="valor-negativo">R$ {{ "%.2f"|format(gasto.valor) }}</td>
+                    <td class="acoes">
+                        <a href="{{ url_for('detalhe_gasto', id=gasto.id) }}" class="botao botao-pequeno">Ver</a>
+                        <a href="{{ url_for('editar_gasto', id=gasto.id) }}" class="botao botao-pequeno botao-secundario">Editar</a>
+                        <form action="{{ url_for('deletar_gasto', id=gasto.id) }}" method="post" class="form-inline" onsubmit="return confirmarRemocao(event, '{{ gasto.descricao }}');">
+                            <button type="submit" class="botao botao-pequeno botao-perigo">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="mensagem-vazia">Nenhum gasto encontrado para este filtro.</p>
+    {% endif %}
+{% endblock %}

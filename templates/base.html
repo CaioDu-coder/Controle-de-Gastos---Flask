@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-tema="{{ tema_atual }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Controle de Gastos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="tema-{{ tema_atual }}">
+
+    <header class="cabecalho">
+        <div class="cabecalho-conteudo">
+            <a href="{{ url_for('index') }}" class="logo">💰 Controle de Gastos</a>
+            <nav class="menu">
+                <a href="{{ url_for('index') }}">Início</a>
+                <a href="{{ url_for('listar_gastos') }}">Gastos</a>
+                <a href="{{ url_for('resumo') }}">Resumo</a>
+                <a href="{{ url_for('novo_gasto') }}">Novo Gasto</a>
+            </nav>
+            <div class="alternador-tema">
+                {% if tema_atual == 'escuro' %}
+                    <a href="{{ url_for('definir_tema', tema='claro') }}" title="Mudar para tema claro">☀️</a>
+                {% else %}
+                    <a href="{{ url_for('definir_tema', tema='escuro') }}" title="Mudar para tema escuro">🌙</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="lista-flash">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="flash flash-{{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer class="rodape">
+        <p>Controle de Gastos &copy; {{ ano_atual }} — Trabalho avaliativo de Flask</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

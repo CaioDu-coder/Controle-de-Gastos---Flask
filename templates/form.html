@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block titulo %}{% if modo == 'novo' %}Novo Gasto{% else %}Editar Gasto{% endif %} - Controle de Gastos{% endblock %}
+
+{% block conteudo %}
+    <h2>{% if modo == 'novo' %}Cadastrar novo gasto{% else %}Editar gasto{% endif %}</h2>
+
+    <form
+        method="post"
+        action="{% if modo == 'novo' %}{{ url_for('novo_gasto') }}{% else %}{{ url_for('editar_gasto', id=gasto.id) }}{% endif %}"
+        class="formulario"
+        id="formulario-gasto"
+    >
+        <div class="campo">
+            <label for="descricao">Descrição</label>
+            <input
+                type="text"
+                id="descricao"
+                name="descricao"
+                maxlength="150"
+                required
+                value="{{ gasto.descricao if gasto else '' }}"
+                placeholder="Ex.: Supermercado, conta de luz, cinema..."
+            >
+        </div>
+
+        <div class="campo-grupo">
+            <div class="campo">
+                <label for="valor">Valor (R$)</label>
+                <input
+                    type="text"
+                    id="valor"
+                    name="valor"
+                    required
+                    value="{{ gasto.valor if gasto else '' }}"
+                    placeholder="Ex.: 89.90"
+                >
+            </div>
+
+            <div class="campo">
+                <label for="data">Data</label>
+                <input
+                    type="date"
+                    id="data"
+                    name="data"
+                    required
+                    value="{{ gasto.data if gasto else data_hoje }}"
+                >
+            </div>
+        </div>
+
+        <div class="campo-grupo">
+            <div class="campo">
+                <label for="categoria">Categoria</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="" disabled {% if not gasto %}selected{% endif %}>Selecione...</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat }}" {% if gasto and gasto.categoria == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="forma_pagamento">Forma de pagamento</label>
+                <select id="forma_pagamento" name="forma_pagamento" required>
+                    <option value="" disabled {% if not gasto %}selected{% endif %}>Selecione...</option>
+                    {% for forma in formas_pagamento %}
+                        <option value="{{ forma }}" {% if gasto and gasto.forma_pagamento == forma %}selected{% endif %}>{{ forma }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="acoes-formulario">
+            <button type="submit" class="botao">
+                {% if modo == 'novo' %}Cadastrar{% else %}Salvar alterações{% endif %}
+            </button>
+            <a href="{{ url_for('listar_gastos') }}" class="botao botao-secundario">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}

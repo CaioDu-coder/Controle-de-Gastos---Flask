@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block titulo %}Resumo - Controle de Gastos{% endblock %}
+
+{% block conteudo %}
+    <h2>Resumo geral dos gastos</h2>
+
+    {% if total_gastos == 0 %}
+        <p class="mensagem-vazia">
+            Ainda não há gastos cadastrados para gerar um resumo.
+            <a href="{{ url_for('novo_gasto') }}">Cadastre o primeiro!</a>
+        </p>
+    {% else %}
+        <section class="cartoes-resumo">
+            <div class="cartao">
+                <span class="cartao-label">Quantidade de gastos</span>
+                <span class="cartao-valor">{{ total_gastos }}</span>
+            </div>
+            <div class="cartao cartao-destaque">
+                <span class="cartao-label">Total gasto</span>
+                <span class="cartao-valor">R$ {{ "%.2f"|format(soma_total) }}</span>
+            </div>
+            <div class="cartao">
+                <span class="cartao-label">Gasto médio</span>
+                <span class="cartao-valor">R$ {{ "%.2f"|format(media_gasto) }}</span>
+            </div>
+            {% if maior_gasto %}
+            <div class="cartao">
+                <span class="cartao-label">Maior gasto</span>
+                <span class="cartao-valor">R$ {{ "%.2f"|format(maior_gasto.valor) }}</span>
+                <span class="cartao-sublabel">{{ maior_gasto.descricao }}</span>
+            </div>
+            {% endif %}
+        </section>
+
+        <section class="secao">
+            <h3>Gastos por categoria</h3>
+            <div class="lista-barras">
+                {% for item in resumo_categorias %}
+                <div class="linha-barra">
+                    <div class="linha-barra-info">
+                        <span class="linha-barra-nome">{{ item.categoria }}</span>
+                        <span class="linha-barra-valor">R$ {{ "%.2f"|format(item.total) }} ({{ item.quantidade }})</span>
+                    </div>
+                    <div class="barra-fundo">
+                        <div class="barra-preenchida" style="width: {{ item.percentual }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="secao">
+            <h3>Gastos por forma de pagamento</h3>
+            <table class="tabela">
+                <thead>
+                    <tr>
+                        <th>Forma de pagamento</th>
+                        <th>Quantidade</th>
+                        <th>Total</th>
+                        <th>% do total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in resumo_formas %}
+                    <tr>
+                        <td>{{ item.forma_pagamento }}</td>
+                        <td>{{ item.quantidade }}</td>
+                        <td class="valor-negativo">R$ {{ "%.2f"|format(item.total) }}</td>
+                        <td>{{ "%.1f"|format(item.percentual) }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ gasto.descricao }} - Controle de Gastos{% endblock %}
+
+{% block conteudo %}
+    <a href="{{ url_for('listar_gastos') }}" class="link-voltar">← Voltar para a lista</a>
+
+    <div class="cartao-detalhe">
+        <h2>{{ gasto.descricao }}</h2>
+
+        <dl class="lista-detalhes">
+            <dt>Valor</dt>
+            <dd class="valor-negativo">R$ {{ "%.2f"|format(gasto.valor) }}</dd>
+
+            <dt>Categoria</dt>
+            <dd><span class="etiqueta">{{ gasto.categoria }}</span></dd>
+
+            <dt>Forma de pagamento</dt>
+            <dd>{{ gasto.forma_pagamento }}</dd>
+
+            <dt>Data do gasto</dt>
+            <dd>{{ gasto.data.strftime('%d/%m/%Y') }}</dd>
+
+            <dt>ID do registro</dt>
+            <dd>#{{ gasto.id }}</dd>
+        </dl>
+
+        <div class="acoes-detalhe">
+            <a href="{{ url_for('editar_gasto', id=gasto.id) }}" class="botao botao-secundario">Editar</a>
+            <form action="{{ url_for('deletar_gasto', id=gasto.id) }}" method="post" class="form-inline" onsubmit="return confirmarRemocao(event, '{{ gasto.descricao }}');">
+                <button type="submit" class="botao botao-perigo">Excluir</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
